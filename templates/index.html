@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Demo</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="max-age=7200" />
+    <link rel="stylesheet" href="https://unpkg.com/mdui@1.0.2/dist/css/mdui.min.css" />
+    <script src="https://cdn.unrun.top/blog/css/jquery.min.js"></script>
+
+
+    <link rel="stylesheet" href="{{url_for('static',filename='main.css')}}">
+
+
+</head>
+
+<body class="mdui-theme-layout-dark  mdui-appbar-with-toolbar  mdui-drawer-body-left">
+    <!-- nav-bloack -->
+    <div class="mdui-appbar mdui-appbar-fixed ">
+        <div class="mdui-toolbar mdui-color-theme">
+            <a href="javascript:;" id="drawer-option" class="mdui-btn mdui-btn-icon">
+                <i class="mdui-icon material-icons">menu</i>
+            </a>
+            <a href="javascript:;" class="mdui-typo-headline">Unkown Wall</a>
+            <div class="mdui-toolbar-spacer"></div>
+            <a href="javascript:;" class="mdui-btn mdui-btn-icon">
+                <i class="mdui-icon material-icons">search</i>
+            </a>
+            <a href="javascript:;" class="mdui-btn mdui-btn-icon">
+                <i class="mdui-icon material-icons" id="refresh">refresh</i>
+            </a>
+            <a href="javascript:;" class="mdui-btn mdui-btn-icon">
+                <i class="mdui-icon material-icons">more_vert</i>
+            </a>
+        </div>
+    </div>
+    <!-- drawer -->
+    <div class="mdui-drawer " id="drawer">
+        <ul class="mdui-list">
+            <li class="mdui-list-item mdui-ripple">
+                <i class="mdui-list-item-icon mdui-icon material-icons">home</i>
+                <div class="mdui-list-item-content" id="tohome">home</div>
+            </li>
+            <li class="mdui-list-item mdui-ripple">
+                <i class="mdui-list-item-icon mdui-icon material-icons">drafts</i>
+                <div class="mdui-list-item-content" id="creat">创建卡片</div>
+            </li>
+            <li class="mdui-subheader">Subheader</li>
+            <li class="mdui-list-item mdui-ripple">
+                <i class="mdui-list-item-icon mdui-icon material-icons">email</i>
+                <div class="mdui-list-item-content" id="email">Email</div>
+            </li>
+            <li class="mdui-list-item mdui-ripple">
+                <i class="mdui-list-item-icon mdui-icon material-icons">code</i>
+                <div class="mdui-list-item-content" id="about">关于</div>
+            </li>
+        </ul>
+    </div>
+    <!-- main right part -->
+    <div id="main" class="mdui-col-lg-12">
+        <!-- comment-block -->
+        <div id="comment-block" class="mdui-col-xs-12  mdui-m-t-5">
+
+        </div>
+        <!-- history -->
+        <div class="mdui-col" id="history" style="margin: 20px;height: 60px">
+            <button style="margin: 20px;height: 60px;bottom: 20px;top: 20px;" id="more" class="mdui-btn mdui-btn-block mdui-color-theme-accent mdui-ripple mdui-m-b-5">
+                <i class="mdui-icon material-icons">history</i>加载更多(默认5条) 剩余
+                <span id="have_count"></span>
+            </button>
+        </div>
+        <!-- input-block -->
+        <div id="input-block" style="display: none" class="mdui-col-xs-12  mdui-m-t-5">
+            <div class="mdui-card mdui-hoverable mdui-center"
+                style="margin: 20px ;padding: 20px;width:800px;border-radius: 16px">
+                <div class="mdui-card-primary">
+                    <div class="mdui-card-primary-title">创建卡片</div>
+                    <div class="mdui-card-primary-subtitle">创建卡片的描述</div>
+                </div>
+                <div class="mdui-divider"></div>
+                <div class="mdui-card-content">
+                    <div class="mdui-textfield ">
+                        <i class="mdui-icon material-icons">account_circle</i>
+                        <label class="mdui-textfield-label ">你的名字</label>
+                        <input id="pname" class="mdui-textfield-input" placeholder="镜音连" type="text" maxlength="20" />
+                        <div class="mdui-textfield-error"></div>
+                    </div>
+                    <div class="mdui-textfield ">
+                        <i class="mdui-icon material-icons">image</i>
+                        <label class="mdui-textfield-label ">头像(可选)</label>
+                        <input id="avatar" class="mdui-textfield-input" placeholder="https://kagamine.top/img.png"
+                            type="text" maxlength="200" />
+                        <div class="mdui-textfield-error"></div>
+                    </div>
+                    <div class="mdui-textfield ">
+                        <i class="mdui-icon material-icons">title</i>
+                        <label class="mdui-textfield-label ">标题</label>
+                        <input id="title" class="mdui-textfield-input" placeholder="一句话介绍一下" type="text"
+                            maxlength="30" />
+                        <div class="mdui-textfield-error"></div>
+                    </div>
+                    <div class="mdui-textfield">
+                        <i class="mdui-icon material-icons">image</i>
+                        <label class="mdui-textfield-label">附加图片(可选)</label>
+                        <input id="imgurl" class="mdui-textfield-input" placeholder="输入图片url地址" type="text"
+                            maxlength="400" />
+                    </div>
+                    <div class="mdui-textfield">
+                        <label class="mdui-textfield-label">内容</label>
+                        <textarea id="pdata" maxlength="1000" class="mdui-textfield-input" rows="10"
+                            placeholder="镜音铃是一个元气的二次元少女"></textarea>
+                    </div>
+                    <button id="sub" class="mdui-btn mdui-color-indigo mdui-ripple mdui-float-right">确定</button>
+                </div>
+            </div>
+        </div>
+        <!-- aboutme -->
+        <div id="aboutme" style="display: none">
+            <div class="mdui-card mdui-hoverable mdui-center"
+                style="margin: 30px ;width:800px;max-height:2000px ;border-radius: 16px">
+                <div class="mdui-card-media">
+
+                    <img style="max-height: 800px"
+                        src="https://img.llilii.cn/compression/vocaloid/kagamine/32639516_p2.jpg" content="no-referrer">
+
+                </div>
+                <div class="mdui-card-primary">
+                    <div class="mdui-card-primary-title">关于本站</div>
+                    <div class="mdui-card-primary-subtitle">ABOUT US</div>
+                </div>
+                <div class="mdui-card-content">
+                    <div class="mdui-type">
+                        <p>不要灌水</p>
+                        <br>
+                        <label class="mdui-checkbox"><input type="checkbox" disabled checked/>
+                            <i class="mdui-checkbox-icon"></i>card页
+                        </label>
+                        <br>
+                        <p>TODO:</p>
+                        <label class="mdui-checkbox"><input type="checkbox" disabled/>
+                            <i class="mdui-checkbox-icon"></i>点赞,评论功能
+                        </label>
+                        <br>
+                        <label class="mdui-checkbox"><input type="checkbox" disabled/>
+                            <i class="mdui-checkbox-icon"></i>评论页面
+                        </label>
+                       
+                    <div class="mdui-divider"></div>
+                    <br>
+                    <div style="text-align: center">
+                    <p>© 2022 <a href="https://blog.unrun.top" target="_blank">unrun</a></p>
+                    <p>Powered by <a href="https://mdui.org" target="_blank">MDUI</a></p>
+                    </div>
+                </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- dialog -->
+    <div class="mdui-dialog" id="dialog">
+        <div class="mdui-dialog-title" id="dialog-title">dialog-title</div>
+        <div class="mdui-dialog-content" id="dialog-content">dialog-content</div>
+        <div class="mdui-dialog-actions">
+            <button class="mdui-btn mdui-ripple" id="dialog-close">ok</button>
+        </div>
+    </div>
+    <script src="https://unpkg.com/mdui@1.0.2/dist/js/mdui.min.js"></script>
+    <script src="{{url_for('static',filename='main.js')}}"></script>
+</body>
+
+
+</html>
