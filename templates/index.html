@@ -25,9 +25,19 @@
             </a>
             <a href="javascript:;" class="mdui-typo-headline">Unkown Wall</a>
             <div class="mdui-toolbar-spacer"></div>
-            <a href="javascript:;" class="mdui-btn mdui-btn-icon">
-                <i class="mdui-icon material-icons">search</i>
-            </a>
+            <!-- search -->
+            <div id="search">
+                <div class="mdui-textfield mdui-textfield-expandable mdui-float-right">
+                    <button class="mdui-textfield-icon mdui-btn mdui-btn-icon">
+                        <i class="mdui-icon material-icons">search</i>
+                    </button>
+                    <input class="mdui-textfield-input" type="text" placeholder="Search" />
+                    <button class="mdui-textfield-close mdui-btn mdui-btn-icon">
+                        <i class="mdui-icon material-icons">close</i>
+                    </button>
+                </div>
+            </div>
+
             <a href="javascript:;" class="mdui-btn mdui-btn-icon">
                 <i class="mdui-icon material-icons" id="refresh">refresh</i>
             </a>
@@ -66,7 +76,8 @@
         </div>
         <!-- history -->
         <div class="mdui-col" id="history" style="margin: 20px;height: 60px">
-            <button style="margin: 20px;height: 60px;bottom: 20px;top: 20px;" id="more" class="mdui-btn mdui-btn-block mdui-color-theme-accent mdui-ripple mdui-m-b-5">
+            <button type="button" style="margin: 20px;height: 60px;bottom: 20px;top: 20px;" id="more"
+                class="mdui-btn mdui-btn-block mdui-color-theme-accent mdui-ripple mdui-m-b-5">
                 <i class="mdui-icon material-icons">history</i>加载更多(默认5条) 剩余
                 <span id="have_count"></span>
             </button>
@@ -74,7 +85,7 @@
         <!-- input-block -->
         <div id="input-block" style="display: none" class="mdui-col-xs-12  mdui-m-t-5">
             <div class="mdui-card mdui-hoverable mdui-center"
-                style="margin: 20px ;padding: 20px;width:800px;border-radius: 16px">
+                style="margin: 20px ;padding: 20px;width:800px;border-radius: 16px ;width:90%">
                 <div class="mdui-card-primary">
                     <div class="mdui-card-primary-title">创建卡片</div>
                     <div class="mdui-card-primary-subtitle">创建卡片的描述</div>
@@ -83,47 +94,54 @@
                 <div class="mdui-card-content">
                     <div class="mdui-textfield ">
                         <i class="mdui-icon material-icons">account_circle</i>
-                        <label class="mdui-textfield-label ">你的名字</label>
-                        <input id="pname" class="mdui-textfield-input" placeholder="镜音连" type="text" maxlength="20" />
-                        <div class="mdui-textfield-error"></div>
+                        <label class="mdui-textfield-label ">你的名字(必填)</label>
+                        <input id="pname" class="mdui-textfield-input" placeholder="镜音连" type="text" required="required"
+                            pattern="^[a-zA-Z0-9_]{4,20}$" maxlength="20" minlength="4" />
+                        <div class="mdui-textfield-error">用户名4-20位 字母，数字，下划线</div>
+                        <div class="mdui-textfield-helper">请输入至少 4 位</div>
                     </div>
                     <div class="mdui-textfield ">
                         <i class="mdui-icon material-icons">image</i>
                         <label class="mdui-textfield-label ">头像(可选)</label>
-                        <input id="avatar" class="mdui-textfield-input" placeholder="https://kagamine.top/img.png"
-                            type="text" maxlength="200" />
-                        <div class="mdui-textfield-error"></div>
+                        <input id="avatar" maxlength="400" class="mdui-textfield-input" value="http://q.qlogo.cn/g?b=qq&s=100&nk="
+                            pattern="^https?:\/\/[\s\S]*" type="text" />
+                            <div class="mdui-textfield-helper">使用QQ头像：http://q.qlogo.cn/g?b=qq&s=100&nk= QQ号</div>
+                        <div class="mdui-textfield-error">以http://或者https://开头</div>
                     </div>
                     <div class="mdui-textfield ">
                         <i class="mdui-icon material-icons">title</i>
-                        <label class="mdui-textfield-label ">标题</label>
+                        <label class="mdui-textfield-label ">标题(必填)</label>
                         <input id="title" class="mdui-textfield-input" placeholder="一句话介绍一下" type="text"
-                            maxlength="30" />
-                        <div class="mdui-textfield-error"></div>
+                            required="required" minlength="2" maxlength="30" />
+                        <div class="mdui-textfield-helper">至少2个字</div>
                     </div>
                     <div class="mdui-textfield">
                         <i class="mdui-icon material-icons">image</i>
                         <label class="mdui-textfield-label">附加图片(可选)</label>
                         <input id="imgurl" class="mdui-textfield-input" placeholder="输入图片url地址" type="text"
-                            maxlength="400" />
+                            pattern="^https?:\/\/[\s\S]*" maxlength="400" />
+                        <div class="mdui-textfield-error">以http://或者https://开头</div>
                     </div>
                     <div class="mdui-textfield">
-                        <label class="mdui-textfield-label">内容</label>
-                        <textarea id="pdata" maxlength="1000" class="mdui-textfield-input" rows="10"
+                        <label class="mdui-textfield-label">内容(必填)</label>
+                        <textarea id="pdata" minlength="10" maxlength="1000" class="mdui-textfield-input" rows="10"
                             placeholder="镜音铃是一个元气的二次元少女"></textarea>
+                        <div class="mdui-textfield-helper">至少10个字</div>
                     </div>
-                    <button id="sub" class="mdui-btn mdui-color-indigo mdui-ripple mdui-float-right">确定</button>
+                    <button type="button" id="sub"
+                        class="mdui-btn mdui-color-indigo mdui-ripple mdui-float-right">确定</button>
                 </div>
             </div>
         </div>
         <!-- aboutme -->
         <div id="aboutme" style="display: none">
             <div class="mdui-card mdui-hoverable mdui-center"
-                style="margin: 30px ;width:800px;max-height:2000px ;border-radius: 16px">
+                style="margin: 30px ;width:800px;max-height:2000px ;border-radius: 16px; width:90%">
                 <div class="mdui-card-media">
 
                     <img style="max-height: 800px"
-                        src="https://img.llilii.cn/compression/vocaloid/kagamine/32639516_p2.jpg" content="no-referrer">
+                        src="https://img.llilii.cn/compression/vocaloid/kagamine/32639516_p2.jpg" content="no-referrer"
+                        alt="">
 
                 </div>
                 <div class="mdui-card-primary">
@@ -134,26 +152,26 @@
                     <div class="mdui-type">
                         <p>不要灌水</p>
                         <br>
-                        <label class="mdui-checkbox"><input type="checkbox" disabled checked/>
+                        <label class="mdui-checkbox"><input type="checkbox" disabled checked />
                             <i class="mdui-checkbox-icon"></i>card页
                         </label>
                         <br>
                         <p>TODO:</p>
-                        <label class="mdui-checkbox"><input type="checkbox" disabled/>
+                        <label class="mdui-checkbox"><input type="checkbox" disabled />
                             <i class="mdui-checkbox-icon"></i>点赞,评论功能
                         </label>
                         <br>
-                        <label class="mdui-checkbox"><input type="checkbox" disabled/>
+                        <label class="mdui-checkbox"><input type="checkbox" disabled />
                             <i class="mdui-checkbox-icon"></i>评论页面
                         </label>
-                       
-                    <div class="mdui-divider"></div>
-                    <br>
-                    <div style="text-align: center">
-                    <p>© 2022 <a href="https://blog.unrun.top" target="_blank">unrun</a></p>
-                    <p>Powered by <a href="https://mdui.org" target="_blank">MDUI</a></p>
+
+                        <div class="mdui-divider"></div>
+                        <br>
+                        <div style="text-align: center">
+                            <p>© 2022 <a href="https://blog.unrun.top" target="_blank">unrun</a></p>
+                            <p>Powered by <a href="https://mdui.org" target="_blank">MDUI</a></p>
+                        </div>
                     </div>
-                </div>
                 </div>
             </div>
 
@@ -164,7 +182,7 @@
         <div class="mdui-dialog-title" id="dialog-title">dialog-title</div>
         <div class="mdui-dialog-content" id="dialog-content">dialog-content</div>
         <div class="mdui-dialog-actions">
-            <button class="mdui-btn mdui-ripple" id="dialog-close">ok</button>
+            <button type="button" class="mdui-btn mdui-ripple" id="dialog-close">ok</button>
         </div>
     </div>
     <script src="https://unpkg.com/mdui@1.0.2/dist/js/mdui.min.js"></script>
@@ -172,4 +190,4 @@
 </body>
 
 
-</html>  
+</html>

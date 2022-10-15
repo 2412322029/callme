@@ -4,6 +4,7 @@ limit = 5
 var m = mdui.$;
 var inst = new mdui.Dialog('#dialog');
 var draw = new mdui.Drawer('#drawer');
+var tooltip = new mdui.Tooltip(".tooltip");
 getcount()
 loadnew(1, limit)
 function getTime(timestamp) {
@@ -18,7 +19,7 @@ function getTime(timestamp) {
 }
 function copytocpil() {
     $('.copy').on('click', function () {
-        copy_data = $(this).attr("copy-data")
+        copy_data = $(this).attr("data-copy")
         console.log("复制到剪切板->" + copy_data);
 
         var aux = document.createElement("input");
@@ -26,11 +27,11 @@ function copytocpil() {
         document.body.appendChild(aux);
         aux.select();
         document.execCommand("copy");
-
         mdui.snackbar({
             message: "链接已复制到剪切板",
             position: 'top'
         });
+        document.body.removeChild(aux);
     });
 }
 
@@ -123,6 +124,8 @@ $("#sub").click(function () {
 
 });
 function sentmsg(pname, avatar, title, pdata, imgurl, ptype) {
+    pdata=pdata.replace(/[\n\r]/g,'<br>')
+    console.log(pdata);
     $.ajax({
         url: basurl + "/api/addmsg",
         data: { "name": pname, "avatar": avatar, "title": title, "data": pdata, "imgurl": imgurl, "type": ptype },
@@ -278,15 +281,16 @@ function delmsg(n) {
 
 function loopcard(pname, avatar, ptime, ptitle, pcontent, imgurl, id) {
     return `
-        <div id=card-"${id}" class="mdui-card mdui-hoverable mdui-center" style="margin: 30px ;width:800px;max-height:2000px ;border-radius: 16px">
+        <div id="card-${id}" class="mdui-card mdui-hoverable mdui-center" style="margin-bottom: 50px;width:90%;max-height:2000px ;border-radius: 8px">
                 <div class="mdui-card-header">
-                    <img class="mdui-card-header-avatar" src="${avatar}" content="no-referrer">
+                <div class="mdui-card-header-subtitle mdui-float-right">id=${id}</div>
+                    <img class="mdui-card-header-avatar" src="${avatar}" content="no-referrer" alt="">
                     <div class="mdui-card-header-title">${pname}</div>
                     <div class="mdui-card-header-subtitle">${ptime}</div>
                 </div>
                         <div class="mdui-card-media">
                             
-                            <img style="max-height: 800px" src="${imgurl}" content="no-referrer">
+                            <img style="max-height: 800px" src="${imgurl}" content="no-referrer" alt="">
                             
                         </div>
                 <div class="mdui-card-primary">
@@ -295,17 +299,17 @@ function loopcard(pname, avatar, ptime, ptitle, pcontent, imgurl, id) {
                 <div class="mdui-card-content">${pcontent}</div>
                 <div class="mdui-card-actions">
 
-                    <div id="like-${id}" class="mdui-float-right mdui-card-primary-subtitle">0</div>
-                    <button class="mdui-btn mdui-btn-icon mdui-float-right" >
+                    <div id="like-${id}" class="mdui-float-right mdui-card-primary-subtitle ">0</div>
+                    <button id="addlike-${id}" type="button" class="mdui-btn mdui-btn-icon mdui-float-right tooltip" mdui-tooltip="{content: '点赞', position: 'auto'}" >
                         <i class="mdui-icon material-icons">favorite</i>
                     </button>
                     
                     <div id="comment-${id}" class="mdui-float-right mdui-card-primary-subtitle">0</div>
-                    <a target="_blank"  href="/card/${id}" class="mdui-btn mdui-btn-icon mdui-float-right">
+                    <a target="_blank"  href="/card/${id}" class="mdui-btn mdui-btn-icon mdui-float-right tooltip" mdui-tooltip="{content: '评论', position: 'auto'}">
                         <i class="mdui-icon material-icons">comment</i>
                     </a>
 
-                    <button class="copy mdui-btn mdui-btn-icon mdui-float-right" copy-data="${basurl}/card/${id}">
+                    <button type="button" class="copy mdui-btn mdui-btn-icon mdui-float-right tooltip" data-copy="${basurl}/card/${id}" mdui-tooltip="{content: '点击复制分享链接', position: 'auto'}">
                         <i class="mdui-icon material-icons">share</i>
                     </button>
 

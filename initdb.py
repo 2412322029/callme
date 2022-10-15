@@ -18,15 +18,15 @@ if __name__ == '__main__':
        print ("数据库打开成功")
        c = conn.cursor()
        c.execute('''
-       CREATE TABLE card
+       CREATE TABLE c
               (id INTEGER NOT NULL AUTO_INCREMENT ,
               name varchar(200)   NOT NULL,
-              avatar varchar(200)    default(""),
+              avatar varchar(200)    default '',
               title varchar(200)   NOT NULL,
-              data  varchar(200)   NOT NULL,
-              imgurl varchar(200)   default(""),
+              data  text   NOT NULL,
+              imgurl varchar(200)   default '',
               time  varchar(200)   NOT NULL,
-              type varchar(200)   default("noimg"),
+              type varchar(200)   default 'noimg',
               PRIMARY KEY(id)
               )
               ''')

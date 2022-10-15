@@ -1,6 +1,4 @@
 from datetime import timedelta
-from tkinter import N
-from turtle import title
 from flask import Flask, render_template, request
 from pysql import CreateCard
 
