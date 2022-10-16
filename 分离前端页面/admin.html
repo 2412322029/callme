@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/mdui@1.0.2/dist/css/mdui.min.css" />
+    <script src="https://cdn.unrun.top/blog/css/jquery.min.js"></script>
+    <title>管理</title>
+</head>
+
+<body class="mdui-theme-layout-dark  mdui-appbar-with-toolbar ">
+    <!-- nav-bloack -->
+    <div class="mdui-appbar mdui-appbar-fixed ">
+        <div class="mdui-toolbar mdui-color-theme">
+            <a href="./index.html" id="drawer-option" class="mdui-btn mdui-btn-icon">
+                <i class="mdui-icon material-icons">home</i>
+            </a>
+            <a href="javascript:;" class="mdui-typo-headline">管理</a>
+            <div class="mdui-toolbar-spacer"></div>
+            <a href="javascript:;" class="mdui-btn mdui-btn-icon">
+                <i class="mdui-icon material-icons">more_vert</i>
+            </a>
+        </div>
+    </div>
+    <!-- table -->
+    <div class="mdui-table-fluid " style="width: 95% ;margin: 20px;">
+        <table class="mdui-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>名称</th>
+
+                    <th>标题</th>
+                    <th>内容</th>
+                    <th>附加图片</th>
+                    <th>时间</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody id="addtable">
+            </tbody>
+        </table>
+
+    </div>
+    <div class="mdui-m-b-5 mdui-m-l-5" style="float:right;margin-right: 100px;">
+        <span id="page">第1页</span>
+        <button id="prepage" class="mdui-btn  mdui-btn-raised mdui-color-indigo mdui-ripple" type="button">上一页</button>
+        <button id="nextpage" class="mdui-btn  mdui-btn-raised mdui-color-indigo mdui-ripple" type="button">下一页</button>
+    </div>
+
+    <script src="https://unpkg.com/mdui@1.0.2/dist/js/mdui.min.js"></script>
+    <script src="./main.js"></script>
+    <script>
+        js = 10000
+        $("document").ready(function () {
+            tpage = 0
+            tlimlit = 5
+            showbypage(tpage * tlimlit + 1, tpage * tlimlit + tlimlit)
+            $('#nextpage').on('click', function () {
+                getcounts()
+                // console.log(js)
+                $('#prepage').removeAttr("disabled")
+                if ((tpage * tlimlit + tlimlit) >= js) {
+                    $('#nextpage').attr("disabled","")
+                    mdui.snackbar({
+                        message: "没有下一页",
+                        position: 'top'
+                    });
+                } else {
+                    tpage++
+                    $("#addtable").html("")
+                    showbypage(tpage * tlimlit + 1, tpage * tlimlit + tlimlit)
+                    $("#page").text("第" + (tpage + 1) + "页");
+                }
+            });
+            $('#prepage').on('click', function () {
+                $('#nextpage').removeAttr("disabled")
+                if (tpage == 0) {
+                    $('#prepage').attr("disabled","")
+                    mdui.snackbar({
+                        message: "已经是第一页",
+                        position: 'top'
+                    });
+                } else {
+                    tpage--
+                    $("#addtable").html("")
+                    showbypage(tpage * tlimlit + 1, tpage * tlimlit + tlimlit)
+                    $("#page").text("第" + tpage + 1 + "页");
+                }
+
+            });
+        })
+        function getcounts() {
+
+            $.ajax({
+                url: basurl + "/api/getcount",
+                type: "get",
+                error: function () {
+                    mdui.snackbar({
+                        message: "网络故障,获取计数失败",
+                        position: 'top'
+                    });
+
+                },
+                success: function (count) {
+                    counts = count["count"]
+                    js = counts
+                }
+
+            });
+
+        }
+    </script>
+</body>
+
+</html>

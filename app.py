@@ -1,8 +1,12 @@
 from datetime import timedelta
 from flask import Flask, render_template, request
+from initdb import conf
 from pysql import CreateCard
+from flask_cors import CORS
 
 app = Flask(__name__, static_folder="static")
+
+CORS(app, resources=r'/*')
 
 app.jinja_env.auto_reload = True
 app.config['TEMPLATES_AUTO_RELOAD'] = True
@@ -17,6 +21,32 @@ def index():
     return render_template('index.html')
 
 
+@app.route('/admin/')
+def admin():
+    return render_template('admin.html')
+
+
+@app.route("/card/<n>")
+def card(n):
+    return render_template("card.html")
+
+
+@app.route("/api/showmsgById", methods=['GET'])
+def showmsgById():
+    id = request.args.get('id', 1)
+    try:
+        id = int(id)
+        query = CreateCard()
+        if id <= 0 or id > 1000000:
+            return {"code": 102, "msg": "id超出范围"}
+        else:
+            res = query.showmsgById(id)
+            return res
+    except ValueError as e:
+        print(e)
+        return {"code": 104, "msg": str(e)}
+
+
 @app.route("/api/showmsg", methods=['GET'])
 def showmsg():
     p = request.args.get('p', 1)
@@ -25,13 +55,12 @@ def showmsg():
         p = int(p)
         l = int(l)
         query = CreateCard()
-        count = query.getcount()
-        if p*l-l > count or p <= 0:
+        if p <= 0 or p > l:
             return {"code": 102, "msg": "页数超出范围"}
         elif l < 0 or l > 50:
             return {"code": 103, "msg": "每页显示超出限制"}
         else:
-            res = query.showmsg(p*l-l+1, p*l)
+            res = query.showmsg(p, l)
             return res
     except ValueError as e:
         print(e)
@@ -47,10 +76,10 @@ def addmsg():
         data = request.form['data']
         type = request.form['type']
         imgurl = request.form['imgurl']
-        if imgurl==None or imgurl=="":
-            imgurl=""
+        if imgurl == None or imgurl == "":
+            imgurl = ""
         if name == None or data == None or title == None or type == None or \
-            name == "" or data == "" or title == "" or type == "" :
+                name == "" or data == "" or title == "" or type == "":
             return {"code": 400, "msg": "不能为空"}
         else:
             query = CreateCard()
@@ -72,14 +101,16 @@ def showmsgNearNow():
     except ValueError as e:
         print(e)
         return {"code": 112, "msg": str(e)}
-    
 
 
 @app.route("/api/delmsg", methods=['GET'])
 def delmsg():
     n = request.args.get("n")
-    if n == None or n == "":
-        return {"code": 112, "msg": "缺少参数n,或为空"}
+    DelPasswd = request.args.get("DelPasswd")
+    if n == None or DelPasswd == None or n == "" or DelPasswd == "":
+        return {"code": 112, "msg": "缺少参数"}
+    elif DelPasswd != conf.DelPasswd:
+        return {"code": 112, "msg": "密码错误"}
     else:
         try:
             n = int(n)
@@ -95,9 +126,11 @@ def getcount():
     query = CreateCard()
     return {"count": query.getcount()}
 
-@app.route("/card/<n>")
-def comment(n):
-    return "<h1>{}号card评论</h1>".format(n)
+
+@app.route("/api/comment", methods=['GET'])
+def comment():
+    return {"comment": "1"}
+
 
 if __name__ == '__main__':
 

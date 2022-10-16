@@ -6,6 +6,7 @@ class conf():
        passwd="123456"
        db="chat"
        port:int=3306
+       DelPasswd="J7QcN"
 
 
 if __name__ == '__main__':
@@ -18,7 +19,7 @@ if __name__ == '__main__':
        print ("数据库打开成功")
        c = conn.cursor()
        c.execute('''
-       CREATE TABLE c
+       CREATE TABLE card
               (id INTEGER NOT NULL AUTO_INCREMENT ,
               name varchar(200)   NOT NULL,
               avatar varchar(200)    default '',
@@ -27,9 +28,26 @@ if __name__ == '__main__':
               imgurl varchar(200)   default '',
               time  varchar(200)   NOT NULL,
               type varchar(200)   default 'noimg',
+              comment_count int(255) default 0,
               PRIMARY KEY(id)
               )
               ''')
-       print ("数据表创建成功")
+       print ("数据表card创建成功")
        conn.commit()
+
+       c = conn.cursor()
+       c.execute('''
+       CREATE TABLE comment
+              (id INTEGER NOT NULL AUTO_INCREMENT ,
+              depth  int(20) default 0,
+              parent_id varchar(200)   NOT NULL,
+              name varchar(200)    NOT NULL,
+              content  text   NOT NULL,
+              time  varchar(200)   NOT NULL,
+              PRIMARY KEY(id)
+              )
+              ''')
+       print ("数据表comment创建成功")
+       conn.commit()
+
        conn.close()

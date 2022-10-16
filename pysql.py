@@ -10,6 +10,32 @@ class CreateCard():
                                     passwd=conf.passwd,
                                     db=conf.db,
                                     port=conf.port)
+    def showmsgById(self, id: int):
+        '''
+        分页显示msg,第几个到第几个
+        :starpage 起始id
+        :endpage  终止id
+        '''
+        if isinstance(id, int) and id>0:
+            c = self.conn.cursor()
+            sql = '''
+            select * from card where id={} limit 1
+            '''.format(id)
+            c.execute(sql)
+            r = c.fetchall()
+            self.conn.commit()
+            if r==():
+                return {"code": 400, "msg": "id不存在"}
+            else:
+                data = []
+                for row in r:
+                    res = {"id": row[0], "name": row[1],
+                        "avatar": row[2], "title": row[3],
+                        "data":row[4],"imgurl":row[5],"time":row[6],"type":row[7]}
+                    data.append(res)
+                self.conn.commit()
+                return {"code": 200, "msg": "id详情查询成功","data": data}
+        return {"code": 105, "msg": "页数应为int类型"}
 
     def showmsg(self, starpage: int, endpage: int):
         '''
@@ -38,7 +64,7 @@ class CreateCard():
                 data.append(res)
             self.conn.commit()
             return {"code": 200, "msg": "showmsg查询成功", "count": r2, "data": data}
-        return {"code": 105, "msg": "页数应为int类型,且"}
+        return {"code": 105, "msg": "页数应为int类型"}
 
     def showmsgNearNow(self, n: int, m: int):
         '''
@@ -130,7 +156,7 @@ if __name__ == '__main__':
     # a=DB.showmsg(1,200)
     # print(a)
 
-    b = DB.showmsgNearNow(1,1)
+    b = DB.showmsgById(6)
     print(b)
 
     # c=DB.addmsg("王五","https://i.imgtg.com/2022/06/21/7y826.jpg"\

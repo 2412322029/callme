@@ -11,7 +11,6 @@
     <script src="https://cdn.unrun.top/blog/css/jquery.min.js"></script>
 
 
-    <!-- <link rel="stylesheet" href="{{url_for('static',filename='main.css')}}"> -->
 
 
 </head>
@@ -23,7 +22,7 @@
             <a href="javascript:;" id="drawer-option" class="mdui-btn mdui-btn-icon">
                 <i class="mdui-icon material-icons">menu</i>
             </a>
-            <a href='javascript:$("#admin").toggle();' class="mdui-typo-headline" id="headline">title</a>
+            <a href='javascript:$("#admin").toggle();' class="mdui-typo-headline">Unkown Wall</a>
             <div class="mdui-toolbar-spacer"></div>
             <!-- search -->
             <div id="search">
@@ -37,11 +36,10 @@
                     </button>
                 </div>
             </div>
-            <!-- 非首页需要隐藏的部分 -->
-            <a id="needhide" href="javascript:;" class="mdui-btn mdui-btn-icon">
+
+            <a href="javascript:;" class="mdui-btn mdui-btn-icon">
                 <i class="mdui-icon material-icons" id="refresh">refresh</i>
             </a>
-
             <a href="javascript:;" class="mdui-btn mdui-btn-icon">
                 <i class="mdui-icon material-icons">more_vert</i>
             </a>
@@ -61,7 +59,7 @@
             <li class="mdui-subheader">Subheader</li>
             <li class="mdui-list-item mdui-ripple" id="admin" style="display:none">
                 <i class="mdui-list-item-icon mdui-icon material-icons">book</i>
-                <div class="mdui-list-item-content" onclick="window.location.href='./admin'">admin</div>
+                <div class="mdui-list-item-content" onclick="window.location.href='./admin.html'">admin</div>
             </li>
             <li class="mdui-list-item mdui-ripple">
                 <i class="mdui-list-item-icon mdui-icon material-icons">email</i>
@@ -75,8 +73,8 @@
     </div>
     <!-- main right part -->
     <div id="main" class="mdui-col-lg-12">
-        <!-- card-block -->
-        <div id="card-block" class="mdui-col-xs-12  mdui-m-t-5">
+        <!-- comment-block -->
+        <div id="comment-block" class="mdui-col-xs-12  mdui-m-t-5">
 
         </div>
         <!-- history -->
@@ -108,11 +106,10 @@
                     <div class="mdui-textfield ">
                         <i class="mdui-icon material-icons">image</i>
                         <label class="mdui-textfield-label ">头像(可选)</label>
-                        <input id="avatar" maxlength="400" class="mdui-textfield-input" pattern="^https?:\/\/[\s\S]*"
-                            type="text" />
-                        <div class="mdui-textfield-helper copy" data-copy="http://q.qlogo.cn/g?b=qq&s=100&nk="
-                            style="cursor:pointer">
-                            使用QQ头像:链接+你的QQ号(点击复制链接到剪切板)</div>
+                        <input id="avatar" maxlength="400" class="mdui-textfield-input" 
+                            pattern="^https?:\/\/[\s\S]*" type="text" />
+                            <div class="mdui-textfield-helper copy" data-copy="http://q.qlogo.cn/g?b=qq&s=100&nk=" style="cursor:pointer">
+                                使用QQ头像:链接+你的QQ号(点击复制链接到剪切板)</div>
                         <div class="mdui-textfield-error">以http://或者https://开头</div>
                     </div>
                     <div class="mdui-textfield ">
@@ -147,8 +144,8 @@
                 <div class="mdui-card-media">
 
                     <img style="max-height: 800px"
-                        src="https://img.llilii.cn/compression/vocaloid/kagamine/32639516_p2.jpg"
-                        referrerPolicy="no-referrer" alt="">
+                        src="https://img.llilii.cn/compression/vocaloid/kagamine/32639516_p2.jpg" content="no-referrer"
+                        alt="">
 
                 </div>
                 <div class="mdui-card-primary">
@@ -183,77 +180,6 @@
             </div>
 
         </div>
-        <!-- detail -->
-        <div id="detail" style="display: none">
-            <div class="mdui-card mdui-hoverable mdui-center"
-                style="margin: 30px ;width:800px;max-height:2000px ;border-radius: 16px; width:90%">
-                <div class="mdui-card-media">
-                    <img id="detail-img" style="max-height: 800px" src="" referrerPolicy="no-referrer" alt="">
-                </div>
-                <div class="mdui-card-primary">
-                    <div class="mdui-card-primary-title" id="detail-title" style="text-align:center ;">默认title</div>
-                    <div class="mdui-card-primary-subtitle" id="detail-time" style="text-align:center ;">默认time</div>
-                    <ui class="mdui-list-item mdui-ripple">
-                        <!-- <div class="mdui-m-r-1">owner:</div> -->
-                        <div class="mdui-list-item-avatar">
-                            <img id="detail-avatar" src="" alt="" />
-                        </div>
-                        <div id="detail-call" class="mdui-list-item-content">默认name</div>
-                    </ui>
-                </div>
-                <div class="mdui-card-content mdui-m-l-5 mdui-m-r-5" id="detail-content">
-                    内容
-                </div>
-                <div class="mdui-card-content mdui-m-l-1  mdui-m-t-5 mdui-m-r-1 mdui-m-b-5">
-                    <div class="mdui-divider"></div>
-                    <div class="mdui-card" style="border-radius: 8px;">
-                        <div class=" mdui-m-l-5 mdui-m-t-5">
-                            <h3>评论区</h3>
-                            <!-- 评论框 -->
-                            <div class="mdui-card-primary">
-                                <div class="mdui-card-primary-title">发表评论</div>
-                                <div class="mdui-card-primary-subtitle">发表您的见解</div>
-                            </div>
-                            <div class="mdui-card-content">
-                                <div class="mdui-textfield">
-                                    <label class="mdui-textfield-label">name</label>
-                                    <input id="nickname" class="mdui-textfield-input" type="text">
-                                </div>
-                                <div class="mdui-textfield">
-                                    <label class="mdui-textfield-label">内容</label>
-                                    <textarea id="content" class="mdui-textfield-input" rows="4"></textarea>
-                                </div>
-                            </div>
-                            <div class="mdui-card-actions">
-                                <button id="submitbtn" style="border-radius: 8px"
-                                    class="mdui-btn mdui-color-indigo mdui-ripple mdui-float-right"
-                                    onclick="commentSubmit()">
-                                    sent </button>
-                            </div>
-
-                        </div>
-                        <!-- 评论区 -->
-                        <div id="allcomment">
-                            <!-- 单个评论 -->
-
-                            <div id="c-${cid}" class="mdui-card-primary">
-                                <div class="mdui-card-primary-subtitle" id="detail-time">
-                                    <span id="c-cname-${cid}" style="font-size: 20px;">${cname}</span>
-                                    &nbsp在<span id="c-ctime-${cid}">${ctime}</span>发表的评论
-                                </div>
-                                <div id="c-cdetail-${cid}" id="detail-call" class="mdui-list-item-content">
-                                    ${cdetail}
-                                </div>
-
-                                <div class="mdui-divider"></div>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
     </div>
     <!-- dialog -->
     <div class="mdui-dialog" id="dialog">
@@ -264,7 +190,7 @@
         </div>
     </div>
     <script src="https://unpkg.com/mdui@1.0.2/dist/js/mdui.min.js"></script>
-    <script src="{{url_for('static',filename='main.js')}}"></script>
+    <script src="./main.js"></script>
 </body>
 
 

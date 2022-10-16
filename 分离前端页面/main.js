@@ -1,19 +1,14 @@
-basurl = "http://" + location.host//api地址
-imgbar_err = "https://i.imgtg.com/2022/10/15/Jy3Jb.png"//附加图片404替换图片
-avatar_err = "https://i.imgtg.com/2022/10/15/J7QcN.png"//头像404替换图片
-limit = 10//每页显示的个数
-headline_name = "Unkown Wall"//标题
-//--------------------
+basurl = "http://127.0.0.1:5000/"
 page = 1
+limit = 5
 var m = mdui.$;
 var inst = new mdui.Dialog('#dialog');
 var draw = new mdui.Drawer('#drawer');
 var tooltip = new mdui.Tooltip(".tooltip");
-$("#headline").text(headline_name)
 getcount()
 loadnew(1, limit)
 function getTime(timestamp) {
-    var date = new Date(parseInt(timestamp) * 1000);
+    var date = new Date(parseInt(timestamp) * 1000);//时间戳为13位的话需要parseInt下
     const Y = date.getFullYear() + '-';
     const M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
     const D = (date.getDate() < 10 ? '0' + date.getDate() : date.getDate()) + ' ';
@@ -23,7 +18,7 @@ function getTime(timestamp) {
     return Y + M + D + h + m + s;
 }
 function copytocpil() {
-    $('.copy').on('click', function () {//不要（）=>this指向
+    $('.copy').on('click', function () {
         copy_data = $(this).attr("data-copy")
         console.log("复制到剪切板->" + copy_data);
 
@@ -39,64 +34,51 @@ function copytocpil() {
         document.body.removeChild(aux);
     });
 }
-function scrolltocard(id) {//"auto","instant"或"smooth"
-    if ($("#card-" + id).length == 1) {
-        $("#card-" + id)[0].scrollIntoView({ behavior: "auto", block: "center" })
-    } else {
-    }
-}
-$('#dialog-close').on('click', () => {
+
+$('#dialog-close').on('click', function () {
     inst.close();
 });
-$('#email').on('click', () => {
+$('#email').on('click', function () {
     $("#dialog-title").text("Hello")
     $("#dialog-content").text("2412322029@qq.com")
     inst.open();
 });
-$('#drawer-option').on('click', () => {
+$('#drawer-option').on('click', function () {
     draw.toggle();
 });
-$("#refresh").on('click', () => {
-    $("#card-block").html(``)
+$("#refresh").on('click', function () {
+    $("#comment-block").html(``)
     loadnew(1, limit)
 });
 
-$('#more').on('click', () => {
+$('#more').on('click', function () {
     loadnew(page * limit, page * limit + limit)
     page++
     getcount()
 
 });
-$('#creat').on('click', () => {
-    $("#card-block").fadeOut(200)
-    $("#needhide").fadeOut(200)
+$('#creat').on('click', function () {
+    $("#comment-block").fadeOut(200)
     $("#history").fadeOut(200)
     $("#aboutme").fadeOut(200)
 
     $("#input-block").fadeIn()
 });
-function tohome() {
-    $("#card-block").fadeIn()
-    $("#needhide").fadeIn(200)
+$('#tohome').on('click', function () {
+    $("#comment-block").fadeIn()
     $("#history").fadeIn()
 
     $("#input-block").fadeOut(200)
     $("#aboutme").fadeOut(200)
-}
-$('#tohome').on('click', () => {
-    tohome()
 });
-
-
-$('#about').on('click', () => {
-    $("#card-block").fadeOut(200)
-    $("#needhide").fadeOut(200)
+$('#about').on('click', function () {
+    $("#comment-block").fadeOut(200)
     $("#history").fadeOut(200)
     $("#input-block").fadeOut(200)
 
     $("#aboutme").fadeIn()
 });
-$("#sub").click(() => {
+$("#sub").click(function () {
     pname = $("#pname").val()
     avatar = $("#avatar").val()
     title = $("#title").val()
@@ -143,12 +125,12 @@ $("#sub").click(() => {
 });
 function sentmsg(pname, avatar, title, pdata, imgurl, ptype) {
     pdata = pdata.replace(/[\n\r]/g, '<br>')
-    // console.log(pdata);
+    console.log(pdata);
     $.ajax({
         url: basurl + "/api/addmsg",
         data: { "name": pname, "avatar": avatar, "title": title, "data": pdata, "imgurl": imgurl, "type": ptype },
         type: "post",
-        error: () => {
+        error: function () {
             mdui.snackbar({
                 message: "网络故障，发送失败",
                 position: 'top'
@@ -163,10 +145,7 @@ function sentmsg(pname, avatar, title, pdata, imgurl, ptype) {
                     message: msg,
                     position: 'top'
                 });
-                str = loopcard(pname, avatar, "刚刚", title+"(刚刚)", pdata, imgurl, "", ptype)
-                $("#card-block").prepend(str)
-
-                // loadnew(1, 1)
+                loadnew(1, 1)
                 copytocpil()
 
             } else {
@@ -179,22 +158,14 @@ function sentmsg(pname, avatar, title, pdata, imgurl, ptype) {
         }
 
     });
-    setTimeout(() => {
-        tohome()//回到主页
-        window.scrollTo({//滚动到顶部
-            top: 0,
-            // behavior: "smooth"
-        })
-    }, 1000);
-
 }
 function getcount() {
     $.ajax({
         url: basurl + "/api/getcount",
         type: "get",
-        error: () => {
+        error: function () {
             mdui.snackbar({
-                message: "网络故障，计数获取失败",
+                message: "网络故障，发送失败",
                 position: 'top'
             });
 
@@ -222,7 +193,7 @@ function loadnew(n, m) {
         url: basurl + "/api/showmsgNearNow",
         data: { "m": m, "n": n },
         type: "GET",
-        error: () => {
+        error: function () {
             mdui.snackbar({
                 message: "网络故障,加载失败",
                 position: 'top'
@@ -233,7 +204,7 @@ function loadnew(n, m) {
             code = result["code"]
             msg = result["msg"]
             if (code == 200) {
-                setTimeout(() => {
+                setTimeout(function () {
                     $("#loading").remove()
                 }, 500)
                 data = result["data"]
@@ -247,20 +218,20 @@ function loadnew(n, m) {
                     // console.log(code, msg, data, count)
                     for (i = 0; i < data.length; i++) {
                         if (data[i]["avatar"] == "") {
-                            str = loopcard(data[i]["name"], avatar_err, getTime(data[i]["time"])
-                                , data[i]["title"], data[i]["data"], data[i]["imgurl"], data[i]["id"], data[i]["type"])
-                            $("#card-block").append(str)
+                            str = loopcard(data[i]["name"], "https://i.imgtg.com/2022/10/15/J7QcN.png", getTime(data[i]["time"])
+                                , data[i]["title"], data[i]["data"], data[i]["imgurl"], data[i]["id"] ,data[i]["type"])
+                            $("#comment-block").append(str)
                         } else {
                             str = loopcard(data[i]["name"], data[i]["avatar"], getTime(data[i]["time"])
-                                , data[i]["title"], data[i]["data"], data[i]["imgurl"], data[i]["id"], data[i]["type"])
-                            $("#card-block").append(str)
+                                , data[i]["title"], data[i]["data"], data[i]["imgurl"], data[i]["id"] ,data[i]["type"])
+                            $("#comment-block").append(str)
                         }
 
                     }
                     mdui.snackbar({
                         message: count + "条数据加载成功,return: " + msg,
                         position: 'top',
-                        timeout: "500"
+                        timeout:"500"
                     });
                     copytocpil()
                 }
@@ -282,7 +253,7 @@ function showbypage(p, l) {
         url: basurl + "/api/showmsg",
         data: { "p": p, "l": l },
         type: "GET",
-        error: () => {
+        error: function () {
             mdui.snackbar({
                 message: "网络故障,加载失败",
                 position: 'top'
@@ -293,7 +264,7 @@ function showbypage(p, l) {
             code = result["code"]
             msg = result["msg"]
             if (code == 200) {
-                setTimeout(() => {
+                setTimeout(function () {
                     $("#loading").remove()
                 }, 500)
                 data = result["data"]
@@ -316,13 +287,11 @@ function showbypage(p, l) {
     });
 }
 function delmsg(n, DelPasswd) {
-    succ = 0
     $.ajax({
         url: basurl + "/api/delmsg",
         data: { "n": n, "DelPasswd": DelPasswd },
         type: "GET",
-        async: false,
-        error: () => {
+        error: function () {
             mdui.snackbar({
                 message: "网络故障,请求失败",
                 position: 'top'
@@ -336,7 +305,6 @@ function delmsg(n, DelPasswd) {
                     message: msg,
                     position: 'top'
                 });
-                succ = 1
 
             } else {
                 mdui.snackbar({
@@ -344,26 +312,27 @@ function delmsg(n, DelPasswd) {
                     position: 'top'
                 });
             }
+
+
         }
     });
-    return succ
 }
 
 
 
 
-function loopcard(pname, avatar, ptime, ptitle, pcontent, imgurl, id, type) {
+function loopcard(pname, avatar, ptime, ptitle, pcontent, imgurl, id ,type) {
     return `
         <div id="card-${id}" class="mdui-card mdui-hoverable mdui-center" style="margin-bottom: 50px;width:90%;max-height:2000px ;border-radius: 8px">
                 <div class="mdui-card-header">
                 <div class="mdui-card-header-subtitle mdui-float-right">id=${id}</div>
-                    <img class="mdui-card-header-avatar" src="${avatar}" referrerPolicy="no-referrer" alt="" onerror="javascript:this.src='${avatar_err}'">
+                    <img class="mdui-card-header-avatar" src="${avatar}" content="no-referrer" alt="" onerror="javascript:this.src='https://i.imgtg.com/2022/10/15/J7QcN.png'">
                     <div class="mdui-card-header-title">${pname}</div>
                     <div class="mdui-card-header-subtitle">${ptime}</div>
                 </div>
                         <div class="mdui-card-media">
                             
-                            <img style="max-height: 800px" src="${imgurl}" referrerPolicy="no-referrer" alt="" onerror="imgerr(${id},'${type}');" id="imgbar-${id}" >
+                            <img style="max-height: 800px" src="${imgurl}" content="no-referrer" alt="" onerror="imgerr(${id},'${type}');" id="imgbar-${id}" >
                             
                         </div>
                 <div class="mdui-card-primary">
@@ -378,11 +347,11 @@ function loopcard(pname, avatar, ptime, ptitle, pcontent, imgurl, id, type) {
                     </button>
                     
                     <div id="comment-${id}" class="mdui-float-right mdui-card-primary-subtitle">0</div>
-                    <a target="_blank"  onclick="showdetail(${id})" class="mdui-btn mdui-btn-icon mdui-float-right tooltip" mdui-tooltip="{content: '评论', position: 'auto'}">
+                    <a target="_blank"  href="./card.html?c=${id}" class="mdui-btn mdui-btn-icon mdui-float-right tooltip" mdui-tooltip="{content: '评论', position: 'auto'}">
                         <i class="mdui-icon material-icons">comment</i>
                     </a>
 
-                    <button type="button" class="copy mdui-btn mdui-btn-icon mdui-float-right tooltip" data-copy="${basurl}/?card=${id}" mdui-tooltip="{content: '点击复制分享链接', position: 'auto'}">
+                    <button type="button" class="copy mdui-btn mdui-btn-icon mdui-float-right tooltip" data-copy="${"http://" + location.host}/card.html?c=${id}" mdui-tooltip="{content: '点击复制分享链接', position: 'auto'}">
                         <i class="mdui-icon material-icons">share</i>
                     </button>
 
@@ -394,16 +363,16 @@ function loopcard(pname, avatar, ptime, ptitle, pcontent, imgurl, id, type) {
 
 function addtable(pname, avatar, ptime, ptitle, pcontent, imgurl, id, type) {
     return `
-    <tr id="tr-${id}">
+    <tr>
                     <th>${id}</th>
-                    <th><img class="mdui-card-header-avatar" src="${avatar}" referrerPolicy="no-referrer" alt="" onerror="javascript:this.src='${avatar_err}'";>
+                    <th><img class="mdui-card-header-avatar" src="${avatar}" content="no-referrer" alt="" onerror="javascript:this.src='https://i.imgtg.com/2022/10/15/J7QcN.png'";>
                     <div style="margin-top: 10px;display: initial;">&nbsp&nbsp&nbsp&nbsp${pname}</div></th>
                     <th>${ptitle}</th>
                     <th style="max-width: 200px;">${pcontent}</th>
-                    <th>${type}类型<br><img style="max-height: 100px" src="${imgurl}" referrerPolicy="no-referrer" alt=""></th>
+                    <th>${type}类型<br><img style="max-height: 100px" src="${imgurl}" content="no-referrer" alt=""></th>
                     <th>${ptime}</th>
                     <td>
-                        <button class="delid mdui-btn mdui-ripple mdui-color-indigo" onclick="del_msg(${id})" type="button">删除</button>
+                        <button data-id="${id}" class="delid mdui-btn mdui-ripple mdui-color-indigo" type="button">删除</button>
                     </td>
                 </tr>
     
@@ -412,191 +381,19 @@ function addtable(pname, avatar, ptime, ptitle, pcontent, imgurl, id, type) {
 
 }
 
-function imgerr(id, type) {
-    t = $("#imgbar-" + id)
-    console.log(id + "号" + type + "类型");
+function imgerr(id,type) {
+    t=$("#imgbar-"+id)
+    console.log(id+"号"+type+"类型");
     if (type == "withimg") {
-        t.attr("src", imgbar_err)
+        t.attr("src",'https://i.imgtg.com/2022/10/15/Jy3Jb.png')
         mdui.snackbar({
-            message: id + "号" + '图片404',
+            message: id+"号"+'图片404',
             position: 'top',
-            timeout: "500"
+            timeout:"500"
         });
-    } else if (type == "noimg") {
+    } else if (type == "noimg"){
         t.remove()
-
+        
     }
     return t
-}
-
-
-function showmsgById(id) {
-
-    $.ajax({
-        url: basurl + "/api/showmsgById",
-        data: { "id": id },
-        type: "get",
-        async: "true",
-        error: () => {
-            mdui.snackbar({
-                message: "网络故障，查询失败",
-                position: 'top'
-            });
-
-        },
-        success: function (result) {
-            code = result["code"]
-            msg = result["msg"]
-            if (code == 200) {
-                type = result["data"][0]["type"]
-                img = result["data"][0]["imgurl"]
-                time = result["data"][0]["time"]
-                content = result["data"][0]["data"]
-                pname = result["data"][0]["name"]
-                t = result["data"][0]["title"]
-                id = result["data"][0]["id"]
-                console.log(result["data"][0], img, type, time, content, pname, t);
-
-                avatar = result["data"][0]["avatar"]
-                if (type == "withimg") {
-                    $("#detail-img").attr("onerror", imgbar_err)
-                    $("#detail-img").attr("src", img)
-                } else {
-                }
-                $(".mdui-typo-headline").text(t)//设置文章标题
-                $("#detail-title").text(t)
-                $("#detail-time").text(getTime(time))
-                $("#detail-content").html(content)
-                $("#detail-avatar").attr("src", avatar)
-                $("#detail-avatar").attr("onerror", `javascript:this.src='${avatar_err}';`)
-                $("#detail-call").text(pname)
-
-            } else {
-                mdui.snackbar({
-                    message: msg + ",code:" + code,
-                    position: 'top'
-                });
-                $(".mdui-typo-headline").text("页面不存在")
-                $("#detail").remove()
-            }
-        }
-
-    });
-
-}
-// window.onscroll = () => {
-//     var scrollPos;
-//     if (typeof window.pageYOffset != 'undefined') {
-//         scrollPos = window.pageYOffset;
-//     }
-//     else if (typeof document.body != 'undefined') {
-//         scrollPos = document.body.scrollTop;
-//     }
-//     document.cookie = "scrollTop=" + scrollPos;
-// }
-window.onload = () => {
-    // if (document.cookie.match(/scrollTop=([^;]+)(;|$)/) != null) {//保存滚动位置
-    //     var arr = document.cookie.match(/scrollTop=([^;]+)(;|$)/);
-    //     setTimeout(() => {
-    //         window.scrollTo({
-    //             top: arr[1],
-    //             behavior: "smooth"
-    //         })
-    //         console.log(arr[1]);
-    //     }, 500)
-
-
-    // }
-    id = GetQueryValue("card")
-    if (id == null) {
-
-    } else {
-        showdetail(id)
-    }
-
-
-}
-
-
-
-
-mem = "标题"
-function showdetail(id) {
-    // 隐藏其他
-    $("#card-block").fadeOut(200)//card 
-
-    $("#history").fadeOut(200)//加载更多
-    $("#aboutme").fadeOut(200)//关于
-    $("#needhide").hide(200)//刷新按钮
-    $("#search").hide(200)//搜索
-
-    //请求数据
-    showmsgById(id)
-    updateUrl(id)
-
-    $("#input-block").fadeOut(200)//创建card
-    $("#detail").fadeIn(200)//进入
-    $("#drawer-option>i").text('arrow_back')//菜单改为返回键
-    mem = $(".mdui-typo-headline").text()//记住原来的标题
-    $("#drawer-option").unbind();//取消绑定
-    $('#drawer-option').on('click', () => {
-        returntocard(id)
-    });
-    draw.close();
-
-
-}
-function returntocard(id) {
-
-    $("#detail").fadeOut(200)
-    $("#card-block").fadeIn(200)//card 
-    $("#search").show(200)//搜索
-    $("#needhide").show(200)
-
-    $(".mdui-typo-headline").text(mem)//还原标题
-    $("#drawer-option>i").text('menu')//还原
-    setTimeout(() => {
-        $('#drawer-option').on('click', () => {//重bind
-            draw.toggle();
-        });
-    }, 1000);
-    if (document.body.clientWidth > 800) {//宽屏幕打开侧边
-        draw.open();
-    }
-    history.pushState('', '', window.location.href.split("/?")[0])
-    scrolltocard(id)
-
-
-}
-
-function updateUrl(id) {
-    var newurl = updateQueryStringParameter("card", id)
-    window.history.replaceState({
-        path: newurl
-    }, '', newurl);
-}
-
-function updateQueryStringParameter(key, value) {
-    var uri = window.location.href
-    if (!value) {
-        return uri;
-    }
-    var re = new RegExp("([?&])" + key + "=.*?(&|$)", "i");
-    var separator = uri.indexOf('?') !== -1 ? "&" : "?";
-    if (uri.match(re)) {
-        return uri.replace(re, '$1' + key + "=" + value + '$2');
-    }
-    else {
-        return uri + separator + key + "=" + value;
-    }
-}
-
-function GetQueryValue(queryName) {
-    var query = decodeURI(window.location.search.substring(1));
-    var vars = query.split("&");
-    for (var i = 0; i < vars.length; i++) {
-        var pair = vars[i].split("=");
-        if (pair[0] == queryName) { return pair[1]; }
-    }
-    return null;
 }
