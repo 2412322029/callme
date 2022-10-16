@@ -42,8 +42,8 @@
                 <i class="mdui-icon material-icons" id="refresh">refresh</i>
             </a>
 
-            <a href="javascript:;" class="mdui-btn mdui-btn-icon">
-                <i class="mdui-icon material-icons">more_vert</i>
+            <a href="javascript:changetheme();" class="mdui-btn mdui-btn-icon">
+                <i class="mdui-icon material-icons">color_lens</i>
             </a>
         </div>
     </div>
@@ -100,9 +100,9 @@
                     <div class="mdui-textfield ">
                         <i class="mdui-icon material-icons">account_circle</i>
                         <label class="mdui-textfield-label ">你的名字(必填)</label>
-                        <input id="pname" class="mdui-textfield-input" placeholder="镜音连" type="text" required="required"
-                            pattern="^[a-zA-Z0-9_]{4,20}$" maxlength="20" minlength="4" />
-                        <div class="mdui-textfield-error">用户名4-20位 字母，数字，下划线</div>
+                        <input id="pname" class="mdui-textfield-input" placeholder="name" type="text" required="required"
+                             maxlength="20" minlength="4" />
+                        
                         <div class="mdui-textfield-helper">请输入至少 4 位</div>
                     </div>
                     <div class="mdui-textfield ">
@@ -132,7 +132,7 @@
                     <div class="mdui-textfield">
                         <label class="mdui-textfield-label">内容(必填)</label>
                         <textarea id="pdata" minlength="10" maxlength="1000" class="mdui-textfield-input" rows="10"
-                            placeholder="镜音铃是一个元气的二次元少女"></textarea>
+                            placeholder=""></textarea>
                         <div class="mdui-textfield-helper">至少10个字</div>
                     </div>
                     <button type="button" id="sub"
@@ -207,52 +207,49 @@
                 <div class="mdui-card-content mdui-m-l-1  mdui-m-t-5 mdui-m-r-1 mdui-m-b-5">
                     <div class="mdui-divider"></div>
                     <div class="mdui-card" style="border-radius: 8px;">
-                        <div class=" mdui-m-l-5 mdui-m-t-5">
-                            <h3>评论区</h3>
-                            <!-- 评论框 -->
-                            <div class="mdui-card-primary">
-                                <div class="mdui-card-primary-title">发表评论</div>
-                                <div class="mdui-card-primary-subtitle">发表您的见解</div>
-                            </div>
-                            <div class="mdui-card-content">
-                                <div class="mdui-textfield">
-                                    <label class="mdui-textfield-label">name</label>
-                                    <input id="nickname" class="mdui-textfield-input" type="text">
-                                </div>
-                                <div class="mdui-textfield">
-                                    <label class="mdui-textfield-label">内容</label>
-                                    <textarea id="content" class="mdui-textfield-input" rows="4"></textarea>
-                                </div>
-                            </div>
-                            <div class="mdui-card-actions">
-                                <button id="submitbtn" style="border-radius: 8px"
-                                    class="mdui-btn mdui-color-indigo mdui-ripple mdui-float-right"
-                                    onclick="commentSubmit()">
-                                    sent </button>
-                            </div>
+                        <div class="mdui-m-l-5 mdui-m-t-5">
 
+                            <!-- 主评论框 -->
+                            <div id="sentbox">
+                                <div class="mdui-card-primary">
+                                    <div class="mdui-card-primary-title">发表评论</div>
+                                    <div class="mdui-card-primary-subtitle">发表您的见解</div>
+                                </div>
+                                <div class="mdui-card-content">
+                                    <div class="mdui-textfield">
+                                        <label class="mdui-textfield-label">name</label>
+                                        <input id="cname" class="mdui-textfield-input" type="text">
+                                    </div>
+                                    <div class="mdui-textfield">
+                                        <label class="mdui-textfield-label">内容</label>
+                                        <textarea id="content" class="mdui-textfield-input" rows="4"></textarea>
+                                    </div>
+                                </div>
+                                <div class="mdui-card-actions">
+                                    <button id="submitbtn" style="border-radius: 8px"
+                                        class="mdui-btn mdui-color-indigo mdui-ripple mdui-float-right">
+                                        sent </button>
+                                </div>
+
+                            </div>
                         </div>
-                        <!-- 评论区 -->
-                        <div id="allcomment">
-                            <!-- 单个评论 -->
 
-                            <div id="c-${cid}" class="mdui-card-primary">
-                                <div class="mdui-card-primary-subtitle" id="detail-time">
-                                    <span id="c-cname-${cid}" style="font-size: 20px;">${cname}</span>
-                                    &nbsp在<span id="c-ctime-${cid}">${ctime}</span>发表的评论
-                                </div>
-                                <div id="c-cdetail-${cid}" id="detail-call" class="mdui-list-item-content">
-                                    ${cdetail}
-                                </div>
-
-                                <div class="mdui-divider"></div>
-                            </div>
-
-                        </div>
                     </div>
                 </div>
             </div>
+            <!-- 评论区 动态插入-->
+            <div class="mdui-card">
+                <div class="mdui-card-primary-title" style="margin: 20px">
+                    <h3>评论列表</h3>
+                </div>
 
+                <div id="allcomment">
+                    <!-- 单个评论 动态插入-->
+                </div>
+            </div>
+            <div class="mdui-card mdui-m-t-0" style="height:100px ">
+            
+            </div>
         </div>
     </div>
     <!-- dialog -->

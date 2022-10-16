@@ -10,13 +10,14 @@ class CreateCard():
                                     passwd=conf.passwd,
                                     db=conf.db,
                                     port=conf.port)
+
     def showmsgById(self, id: int):
         '''
         分页显示msg,第几个到第几个
         :starpage 起始id
         :endpage  终止id
         '''
-        if isinstance(id, int) and id>0:
+        if isinstance(id, int) and id > 0:
             c = self.conn.cursor()
             sql = '''
             select * from card where id={} limit 1
@@ -24,17 +25,18 @@ class CreateCard():
             c.execute(sql)
             r = c.fetchall()
             self.conn.commit()
-            if r==():
+            if r == ():
                 return {"code": 400, "msg": "id不存在"}
             else:
                 data = []
                 for row in r:
                     res = {"id": row[0], "name": row[1],
-                        "avatar": row[2], "title": row[3],
-                        "data":row[4],"imgurl":row[5],"time":row[6],"type":row[7]}
+                           "avatar": row[2], "title": row[3],
+                           "data": row[4], "imgurl": row[5],
+                           "time": row[6], "type": row[7], "comment_count": row[8]}
                     data.append(res)
                 self.conn.commit()
-                return {"code": 200, "msg": "id详情查询成功","data": data}
+                return {"code": 200, "msg": "id详情查询成功", "data": data}
         return {"code": 105, "msg": "页数应为int类型"}
 
     def showmsg(self, starpage: int, endpage: int):
@@ -60,7 +62,8 @@ class CreateCard():
             for row in r:
                 res = {"id": row[0], "name": row[1],
                        "avatar": row[2], "title": row[3],
-                       "data":row[4],"imgurl":row[5],"time":row[6],"type":row[7]}
+                       "data": row[4], "imgurl": row[5],
+                       "time": row[6], "type": row[7], "comment_count": row[8]}
                 data.append(res)
             self.conn.commit()
             return {"code": 200, "msg": "showmsg查询成功", "count": r2, "data": data}
@@ -81,7 +84,8 @@ class CreateCard():
             for row in r:
                 res = {"id": row[0], "name": row[1],
                        "avatar": row[2], "title": row[3],
-                       "data":row[4],"imgurl":row[5],"time":row[6],"type":row[7]}
+                       "data": row[4], "imgurl": row[5],
+                       "time": row[6], "type": row[7], "comment_count": row[8]}
                 data.append(res)
             self.conn.commit()
             return {"code": 200, "msg": "showmsgNearNow查询成功", "data": data}
@@ -103,8 +107,8 @@ class CreateCard():
             return {"code": 200, "msg": "发送成功"}
         except pymysql.Error as e:
             self.conn.rollback()  # 发生错误回滚
-            return {"code": 400, "msg": "Data too long "}
             print(e)
+            return {"code": 400, "msg": "Data too long "}
 
     def delmsg(self, id: int):
         '''
@@ -146,6 +150,83 @@ class CreateCard():
         self.conn.commit()
         return r
 
+    def new_one_comment(self, cid: int):
+        '''
+        评论数加一
+        '''
+        c = self.conn.cursor()
+        sql = '''
+        update card set comment_count=comment_count+1 where id = {}
+        '''.format(cid)
+        r = c.execute(sql)
+        self.conn.commit()
+        # print(r)
+        if r == 1:
+            return {"code": 200, "msg": str(cid)+"号，评论加一"}
+        else:
+            return {"code": 400, "msg": "评论计数失败"}
+
+    def sentcomment(self, cid: int, depth: int, parent_id: int, name: str, content: str):
+        '''
+        插入评论
+        cid:所属卡片id
+        depth:评论嵌套深度
+        parent_id:该评论的上一级评论id,该值为0表示depth=0,没有上级评论
+        name:名称
+        content:内容
+        '''
+
+        c = self.conn.cursor()
+        sql = '''
+        INSERT INTO comment (cid,depth,parent_id,name,content,time)
+            VALUES ('{}','{}','{}','{}','{}',{})
+        '''.format(cid, depth, parent_id, name, content, time.time())
+        try:
+            c.execute(sql)
+            self.conn.commit()
+            self.new_one_comment(cid)  # 评论数加一
+            return {"code": 200, "msg": "评论发送成功"}
+        except pymysql.Error as e:
+            self.conn.rollback()  # 发生错误回滚
+            print(e)
+            return {"code": 400, "msg": "评论发送失败"}
+
+    def readcomment(self, cid: int):
+        '''
+        cid:卡片id
+        '''
+        try:
+            cid=int(cid)
+            
+            c = self.conn.cursor()
+            sql = '''
+            select id,depth,parent_id,name,content,time,cid from comment 
+                where cid={}
+            '''.format(cid)
+            result=c.execute(sql)
+            if result==0:
+                return {"code": 300, "msg": "没有评论"}
+            else: 
+                r=c.fetchall()
+                self.conn.commit()
+                data = []
+                for row in r:
+                    id=row[0]
+                    depth=row[1]
+                    parent_id=row[2]
+                    name=row[3]
+                    content=row[4]
+                    time=row[5]
+                    cid=row[6]
+                    res={"id": id,"depth":depth,"parent_id":parent_id,
+                        "name": name,"content":content,
+                        "time":time,"cid":cid}
+                    data.append(res) 
+                return {"code": 200, "msg": "评论查询成功", "data": data}
+        except ValueError as e:
+            return  {"code": 400, "msg": e}
+
+
 
 if __name__ == '__main__':
     DB = CreateCard()
@@ -156,8 +237,9 @@ if __name__ == '__main__':
     # a=DB.showmsg(1,200)
     # print(a)
 
-    b = DB.showmsgById(6)
-    print(b)
+    # print(DB.sentcomment(6,1,1,"txxxxt1","ccccxxc"))
+
+    print(DB.readcomment(6))
 
     # c=DB.addmsg("王五","https://i.imgtg.com/2022/06/21/7y826.jpg"\
     #     ,"标题","内容","https://i.imgtg.com/2022/06/21/7y826.jpg","withimg")

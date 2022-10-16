@@ -127,10 +127,32 @@ def getcount():
     return {"count": query.getcount()}
 
 
-@app.route("/api/comment", methods=['GET'])
-def comment():
-    return {"comment": "1"}
+@app.route("/api/sentcomment", methods=['POST'])
+def sentcomment():
+    try:
+        cid = request.form['cid']
+        depth = request.form['depth']
+        parent_id = request.form['parent_id']
+        name = request.form['name']
+        content = request.form['content']
+        cid=int(cid)
+        depth=int(depth)
+        parent_id=int(parent_id)
+        query = CreateCard()
+        # print(cid,depth,parent_id,name,content)
+        return query.sentcomment(cid,depth,parent_id,name,content)
+    except:
+        return {"code": 112, "msg": "参数错误"}
 
+@app.route("/api/readcomment", methods=['GET'])
+def readcomment():
+    try:
+        cid = request.args.get("cid")
+        cid=int(cid)
+        query = CreateCard()
+        return query.readcomment(cid)
+    except:
+        return {"code": 112, "msg": "参数错误"}
 
 if __name__ == '__main__':
 

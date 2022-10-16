@@ -2,7 +2,7 @@ basurl = "http://" + location.host//api地址
 imgbar_err = "https://i.imgtg.com/2022/10/15/Jy3Jb.png"//附加图片404替换图片
 avatar_err = "https://i.imgtg.com/2022/10/15/J7QcN.png"//头像404替换图片
 limit = 10//每页显示的个数
-headline_name = "Unkown Wall"//标题
+headline_name = "Demo"//标题
 //--------------------
 page = 1
 var m = mdui.$;
@@ -163,7 +163,7 @@ function sentmsg(pname, avatar, title, pdata, imgurl, ptype) {
                     message: msg,
                     position: 'top'
                 });
-                str = loopcard(pname, avatar, "刚刚", title+"(刚刚)", pdata, imgurl, "", ptype)
+                str = loopcard(pname, avatar, "刚刚", title + "(刚刚)", pdata, imgurl, "", ptype, 0)
                 $("#card-block").prepend(str)
 
                 // loadnew(1, 1)
@@ -246,13 +246,18 @@ function loadnew(n, m) {
                 } else {
                     // console.log(code, msg, data, count)
                     for (i = 0; i < data.length; i++) {
+                        // console.log(data[i]["comment_count"])
                         if (data[i]["avatar"] == "") {
                             str = loopcard(data[i]["name"], avatar_err, getTime(data[i]["time"])
-                                , data[i]["title"], data[i]["data"], data[i]["imgurl"], data[i]["id"], data[i]["type"])
+                                , data[i]["title"], data[i]["data"], data[i]["imgurl"], data[i]["id"], data[i]["type"]
+                                , data[i]["comment_count"]
+                            )
                             $("#card-block").append(str)
                         } else {
                             str = loopcard(data[i]["name"], data[i]["avatar"], getTime(data[i]["time"])
-                                , data[i]["title"], data[i]["data"], data[i]["imgurl"], data[i]["id"], data[i]["type"])
+                                , data[i]["title"], data[i]["data"], data[i]["imgurl"], data[i]["id"], data[i]["type"]
+                                , data[i]["comment_count"]
+                            )
                             $("#card-block").append(str)
                         }
 
@@ -352,7 +357,7 @@ function delmsg(n, DelPasswd) {
 
 
 
-function loopcard(pname, avatar, ptime, ptitle, pcontent, imgurl, id, type) {
+function loopcard(pname, avatar, ptime, ptitle, pcontent, imgurl, id, type, comment_count) {
     return `
         <div id="card-${id}" class="mdui-card mdui-hoverable mdui-center" style="margin-bottom: 50px;width:90%;max-height:2000px ;border-radius: 8px">
                 <div class="mdui-card-header">
@@ -377,7 +382,7 @@ function loopcard(pname, avatar, ptime, ptitle, pcontent, imgurl, id, type) {
                         <i class="mdui-icon material-icons">favorite</i>
                     </button>
                     
-                    <div id="comment-${id}" class="mdui-float-right mdui-card-primary-subtitle">0</div>
+                    <div id="comment-${id}" class="mdui-float-right mdui-card-primary-subtitle">${comment_count}</div>
                     <a target="_blank"  onclick="showdetail(${id})" class="mdui-btn mdui-btn-icon mdui-float-right tooltip" mdui-tooltip="{content: '评论', position: 'auto'}">
                         <i class="mdui-icon material-icons">comment</i>
                     </a>
@@ -414,7 +419,7 @@ function addtable(pname, avatar, ptime, ptitle, pcontent, imgurl, id, type) {
 
 function imgerr(id, type) {
     t = $("#imgbar-" + id)
-    console.log(id + "号" + type + "类型");
+    // console.log(id + "号" + type + "类型");
     if (type == "withimg") {
         t.attr("src", imgbar_err)
         mdui.snackbar({
@@ -455,7 +460,7 @@ function showmsgById(id) {
                 pname = result["data"][0]["name"]
                 t = result["data"][0]["title"]
                 id = result["data"][0]["id"]
-                console.log(result["data"][0], img, type, time, content, pname, t);
+                // console.log(result["data"][0], img, type, time, content, pname, t);
 
                 avatar = result["data"][0]["avatar"]
                 if (type == "withimg") {
@@ -512,6 +517,13 @@ window.onload = () => {
 
     } else {
         showdetail(id)
+        setTimeout(() => {
+            window.scrollTo({//滚动到顶部
+                top: 0,
+                // behavior: "smooth"
+            })
+        }, 100);
+
     }
 
 
@@ -522,11 +534,12 @@ window.onload = () => {
 
 mem = "标题"
 function showdetail(id) {
+    // $("#detail-img").attr("src","")
     // 隐藏其他
-    $("#card-block").fadeOut(200)//card 
+    $("#card-block").hide(200)//card 
 
-    $("#history").fadeOut(200)//加载更多
-    $("#aboutme").fadeOut(200)//关于
+    $("#history").hide(200)//加载更多
+    $("#aboutme").hide(200)//关于
     $("#needhide").hide(200)//刷新按钮
     $("#search").hide(200)//搜索
 
@@ -534,8 +547,11 @@ function showdetail(id) {
     showmsgById(id)
     updateUrl(id)
 
-    $("#input-block").fadeOut(200)//创建card
-    $("#detail").fadeIn(200)//进入
+
+
+    $("#input-block").hide(200)//创建card
+    $("#detail").show(200)//进入
+    $("#detail").attr("data-cid", id)
     $("#drawer-option>i").text('arrow_back')//菜单改为返回键
     mem = $(".mdui-typo-headline").text()//记住原来的标题
     $("#drawer-option").unbind();//取消绑定
@@ -543,15 +559,25 @@ function showdetail(id) {
         returntocard(id)
     });
     draw.close();
+    //加载评论
+    readcomment(id)
+
+    window.scrollTo({//滚动到顶部
+        top: 0,
+        // behavior: "smooth"
+    })
+
 
 
 }
 function returntocard(id) {
-
-    $("#detail").fadeOut(200)
-    $("#card-block").fadeIn(200)//card 
+    $("#allcomment").html("")
+    $("#detail-img").attr("src", "")
+    $("#detail").hide(200)
+    $("#card-block").show()//card 
     $("#search").show(200)//搜索
     $("#needhide").show(200)
+    $("#history").show()
 
     $(".mdui-typo-headline").text(mem)//还原标题
     $("#drawer-option>i").text('menu')//还原
@@ -599,4 +625,251 @@ function GetQueryValue(queryName) {
         if (pair[0] == queryName) { return pair[1]; }
     }
     return null;
+}
+
+
+function sentcomment(cid, depth, parent_id, name, content) {
+    content = content.replace(/[\n\r]/g, '<br>')
+    console.log(cid, "|", depth, "|", parent_id, "|", name, "|", content);
+    $.ajax({
+        url: basurl + "/api/sentcomment",
+        data: {
+            "cid": cid, "depth": depth, "parent_id": parent_id,
+            "name": name, "content": content
+        },
+        type: "POST",
+        async: "true",
+        error: () => {
+            mdui.snackbar({
+                message: "网络故障，发送失败",
+                position: 'top'
+            });
+
+        },
+        success: function (result) {
+            code = result["code"]
+            msg = result["msg"]
+            if (code == 200) {
+                mdui.snackbar({
+                    message: msg,
+                    position: 'top'
+                });
+                if (depth == 0) {
+                    str = showcomment(0, name, "刚刚", content)
+                    $("#allcomment").prepend(str)
+                    $("#c-0")[0].scrollIntoView({ behavior: "auto", block: "center" })
+                    $("#c-0").animate({ opacity: '0' });
+                    $("#c-0").animate({ opacity: '1' });
+        
+                } else if (depth == 1) {
+                    str = showcomment(0, name, "刚刚", content)
+                    $("#l-" + parent_id).after(str)
+                    $("#c-0")[0].scrollIntoView({ behavior: "auto", block: "center" })
+                    $("#c-0").animate({ opacity: '0' });
+                    $("#c-0").animate({ opacity: '1' });
+                }
+                click_reply_btn()
+
+                // location.reload()
+            }
+        }
+
+    });
+}
+
+$("#submitbtn").on('click', () => {
+    cid = $("#detail").attr("data-cid")
+    // console.log(cid);
+    depth = 0
+    parent_id = 0
+    commentSubmit(cid, depth, parent_id)
+});
+function commentSubmit(cid, depth, parent_id) {
+    cname = $("#cname").val()
+    content = $("#content").val()
+    if (cname.length == 0 || content.length == 0) {
+        mdui.snackbar({
+            message: "内容不能为空",
+            position: 'top'
+        });
+    } else if (cname.length > 30 || content.length > 1000) {
+        mdui.snackbar({
+            message: "文本太长",
+            position: 'top'
+        });
+    } else {
+        sentcomment(cid, depth, parent_id, cname, content)
+    }
+}
+function readcomment(cid) {
+    $.ajax({
+        url: basurl + "/api/readcomment",
+        data: { "cid": cid },
+        type: "GET",
+        async: "false",
+        error: () => {
+            mdui.snackbar({
+                message: "网络故障，评论获取失败",
+                position: 'top'
+            });
+        },
+        success: function (result) {
+            code = result["code"]
+            msg = result["msg"]
+
+            if (code == 200) {
+                data = result["data"]
+                for (i = 0; i < data.length; i++) {
+                    id = data[i]["id"]
+                    cid = data[i]["cid"]//
+                    pname = data[i]["name"]
+                    content = data[i]["content"]
+                    time = data[i]["time"]
+                    depth = data[i]["depth"]//
+                    parent_id = data[i]["parent_id"]//
+                    if (depth == 0) {
+                        str = showcomment(id, pname, getTime(time), content)
+                        $("#allcomment").prepend(str)
+                    } else if (depth == 1) {
+                        str = showreplycomment(id, pname, getTime(time), content)
+                        $("#c-" + parent_id).append(str)
+                    }
+
+                }
+                click_reply_btn()
+            } else {
+            }
+        }
+    });
+}
+function showcomment(id, cname, ctime, cdetail) {
+    return `
+    <div id="c-${id}" class="mdui-card-primary">
+        <div class="on">
+            <div class="mdui-card-primary-subtitle  id="detail-time">
+                <span id="c-cname-${id}" style="font-size: 20px;">${cname}</span>
+                &nbsp在<span id="c-ctime-${id}">${ctime}</span>发表的评论
+            </div>
+            <div id="c-cdetail-${id}" id="detail-call" class="mdui-list-item-content mdui-m-b-2">
+                ${cdetail}
+                <button data-partent="${id}" style="border-radius: 8px"
+                    class="mdui-btn mdui-color-grey-700 mdui-ripple mdui-float-right replybtn">
+                    <i class="mdui-icon material-icons">reply</i>回复 </button>
+            </div>
+        </div>
+
+        <i class="mdui-icon material-icons" id="zdup-${id}" onclick="zdup(${id})" style="cursor: pointer;">
+        keyboard_arrow_down</i>
+
+        
+            <div class="mdui-divider" id="l-${id}"></div>
+        <div class="on-body"></div>
+        
+    </div>
+    `
+}
+function showreplycomment(id, cname, ctime, cdetail) {
+    return `
+    <div id="c-${id}" class="mdui-card-primary" style="margin-left:40px;padding-right: 0;">
+        <div class="on">
+            <div style="border-left: #ffffff1f solid;padding-left: 20px;">
+                <div class="mdui-card-primary-subtitle" id="detail-time">
+                    <span id="c-cname-${id}" style="font-size: 20px;">${cname}</span>
+                    &nbsp在<span id="c-ctime-${id}">${ctime}</span>发表的评论
+                </div>
+                <div id="c-cdetail-${id}" id="detail-call" class="mdui-list-item-content mdui-m-b-2 " >
+                    ${cdetail}
+                    <button data-partent="${id}" style="border-radius: 8px"
+                        class="mdui-btn mdui-color-grey-700 mdui-ripple mdui-float-right replybtn">
+                        <i class="mdui-icon material-icons">reply</i>回复 </button>
+                </div>
+            </div>
+        </div>
+        <i class="mdui-icon material-icons" id="zdup-${id}" onclick="zdup(${id})" style="cursor: pointer;">
+        keyboard_arrow_down</i>
+
+        
+            <div class="mdui-divider" id="l-${id}"></div>
+        <div class="on-body"></div>
+
+    </div>
+    `
+}
+flag = 0
+function changetheme() {
+    if (flag == 1) {
+        $("body").removeClass("mdui-theme-layout-dark").addClass("mdui-theme-primary-blue")
+        flag = 0
+    } else if (flag == 0) {
+        $("body").removeClass("mdui-theme-primary-blue").addClass("mdui-theme-layout-dark")
+        flag = 1
+    }
+
+}
+function click_reply_btn() {
+    $(".replybtn").on('click', function () {
+        parent_id = $(this).attr("data-partent")
+        console.log(parent_id);
+        $(".replybox").remove()
+        $("#l-" + parent_id).after(dom)
+        $("#sentreply").on('click', function () {
+            rname = $("#reply_name").val()
+            content = $("#reply_content").val()
+            cid = $("#detail").attr("data-cid")
+            depth = 1
+            if (rname.length == 0 || content.length == 0) {
+                mdui.snackbar({
+                    message: "内容不能为空",
+                    position: 'top'
+                });
+            } else if (rname.length > 30 || content.length > 1000) {
+                mdui.snackbar({
+                    message: "文本太长",
+                    position: 'top'
+                });
+            } else {
+                console.log(cid, "|", depth, "|", parent_id, "|", rname, "|", content);
+                sentcomment(cid, depth, parent_id, rname, content)
+            }
+        });
+    });
+
+
+    dom = `<div class="replybox" style="border-left: #ffffff1f solid">
+                <div class="mdui-card-primary">
+                    <div class="mdui-card-primary-title">
+                    回复
+                        <button onclick="$('.replybox').remove()" style="border-radius: 8px" type="button"
+                            class="mdui-btn mdui-color-red mdui-ripple mdui-float-right">
+                            关闭 </button>
+                    </div>
+                </div>
+                <div class="mdui-card-content">
+                    <div class="mdui-textfield">
+                        <label class="mdui-textfield-label">name</label>
+                        <input id="reply_name" class="mdui-textfield-input" type="text">
+                    </div>
+                    <div class="mdui-textfield">
+                        <label class="mdui-textfield-label">内容</label>
+                        <textarea id="reply_content" class="mdui-textfield-input" rows="4"></textarea>
+                    </div>
+                </div>
+                <div class="mdui-card-actions">
+                
+                    <button id="sentreply" style="border-radius: 8px" type="button"
+                        class="mdui-btn mdui-color-indigo mdui-ripple mdui-float-right">
+                        发送 </button>
+                </div>
+        </div>`
+}
+
+function zdup(id){
+    if($("#zdup-"+id).css('transform')=='matrix(-1, -1.22465e-16, 1.22465e-16, -1, 0, 0)'){
+        $("#zdup-"+id).css({'transform': 'rotate(0deg)'});
+    }else{
+        $("#zdup-"+id).css({'transform': 'rotate(-180deg)'});
+    }
+    
+    x=$("#c-"+id+">.on-body")
+    x.nextAll().slideToggle("slow");
 }

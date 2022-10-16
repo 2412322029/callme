@@ -19,7 +19,7 @@ if __name__ == '__main__':
        print ("数据库打开成功")
        c = conn.cursor()
        c.execute('''
-       CREATE TABLE card
+       CREATE TABLE ca
               (id INTEGER NOT NULL AUTO_INCREMENT ,
               name varchar(200)   NOT NULL,
               avatar varchar(200)    default '',
@@ -37,8 +37,9 @@ if __name__ == '__main__':
 
        c = conn.cursor()
        c.execute('''
-       CREATE TABLE comment
+       CREATE TABLE commen
               (id INTEGER NOT NULL AUTO_INCREMENT ,
+              cid int(255) NOT NULL,
               depth  int(20) default 0,
               parent_id varchar(200)   NOT NULL,
               name varchar(200)    NOT NULL,

@@ -14,7 +14,7 @@
     <!-- nav-bloack -->
     <div class="mdui-appbar mdui-appbar-fixed ">
         <div class="mdui-toolbar mdui-color-theme">
-            <a href="./index.html" id="drawer-option" class="mdui-btn mdui-btn-icon">
+            <a href="../" id="drawer-option" class="mdui-btn mdui-btn-icon">
                 <i class="mdui-icon material-icons">home</i>
             </a>
             <a href="javascript:;" class="mdui-typo-headline">管理</a>
@@ -49,7 +49,18 @@
         <button id="prepage" class="mdui-btn  mdui-btn-raised mdui-color-indigo mdui-ripple" type="button">上一页</button>
         <button id="nextpage" class="mdui-btn  mdui-btn-raised mdui-color-indigo mdui-ripple" type="button">下一页</button>
     </div>
-
+    <!-- del_dialog -->
+    <div class="mdui-dialog" id="del_dialog">
+        <div class="mdui-dialog-title" id="del_dialog-title"></div>
+        <div class="mdui-dialog-content" id="del_dialog-content">
+            <div class="mdui-textfield">
+                <input class="mdui-textfield-input" type="text" id="delpasswd" placeholder="删除密码" />
+            </div>
+        </div>
+        <div class="mdui-dialog-actions">
+            <button type="button" class="mdui-btn mdui-ripple" id="del_dialog-close">确认</button>
+        </div>
+    </div>
     <script src="https://unpkg.com/mdui@1.0.2/dist/js/mdui.min.js"></script>
     <script src="./main.js"></script>
     <script>
@@ -63,7 +74,7 @@
                 // console.log(js)
                 $('#prepage').removeAttr("disabled")
                 if ((tpage * tlimlit + tlimlit) >= js) {
-                    $('#nextpage').attr("disabled","")
+                    $('#nextpage').attr("disabled", "")
                     mdui.snackbar({
                         message: "没有下一页",
                         position: 'top'
@@ -78,7 +89,7 @@
             $('#prepage').on('click', function () {
                 $('#nextpage').removeAttr("disabled")
                 if (tpage == 0) {
-                    $('#prepage').attr("disabled","")
+                    $('#prepage').attr("disabled", "")
                     mdui.snackbar({
                         message: "已经是第一页",
                         position: 'top'
@@ -91,6 +102,7 @@
                 }
 
             });
+            mdui.mutation()
         })
         function getcounts() {
 
@@ -112,6 +124,36 @@
             });
 
         }
+
+        function del_msg(id) {
+            var del_dialog = new mdui.Dialog('#del_dialog');
+            console.log(id);
+            $("#del_dialog-title").text("删除 " + id+",请输入密码")
+            del_dialog.open();
+            $('#del_dialog-close').on('click', function () {
+                delpasswd = $("#delpasswd").val()
+                if (delpasswd == "" || delpasswd.length < 3) {
+                    mdui.snackbar({
+                        message: "请输入密码",
+                        position: 'top',
+                        timeout: "500"
+                    });
+                }else{
+                    console.log(delpasswd);
+                    del_dialog.close();
+                    succ=delmsg(id,delpasswd)
+                    if( succ==1){
+                        $("#tr-"+id).remove()
+                    }else{
+                        console.log("删除失败不移除元素")
+                    }
+
+                }
+                
+            });
+        }
+
+
     </script>
 </body>
 
